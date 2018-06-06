@@ -1,11 +1,14 @@
 Library ieee;
 Use ieee.std_logic_1164.all;
+Use ieee.std_logic_arith.all;
+Use ieee.std_logic_unsigned.all;
+Use ieee.numeric_std.all;
 
 Entity Projeto_relogio is
 Port (clock : IN std_logic;
 	config : IN std_logic;
   mode : IN std_logic;
-  str/sto :: IN std_logic;
+  str_sto : IN std_logic;
 	set : IN std_logic;
 	reset : IN std_logic;
   hora_dec : OUT  std_logic_vector(6 DOWNTO 0);
@@ -17,205 +20,205 @@ Port (clock : IN std_logic;
 End  Projeto_relogio;
 
 Architecture Projeto_relogio of Projeto_relogio is
-  signal hora_dec_in : std_logic_vector(6 DOWNTO 0) := '0000000';
-  signal hora_uni_in : std_logic_vector(6 DOWNTO 0) := '0000000';
-  signal min_dec_in : std_logic_vector(6 DOWNTO 0) := '0000000';
-  signal min_uni_in : std_logic_vector(6 DOWNTO 0) := '0000000';
-  signal seg_dec_in : std_logic_vector(6 DOWNTO 0) := '0000000';
-  signal seg_uni_in : std_logic_vector(6 DOWNTO 0) := '0000000');
-  variable count : integer := 0;
+  signal hora_dec_in : std_logic_vector(6 DOWNTO 0) := "0000000";
+  signal hora_uni_in : std_logic_vector(6 DOWNTO 0) := "0000000";
+  signal min_dec_in : std_logic_vector(6 DOWNTO 0) := "0000000";
+  signal min_uni_in : std_logic_vector(6 DOWNTO 0) := "0000000";
+  signal seg_dec_in : std_logic_vector(6 DOWNTO 0) := "0000000";
+  signal seg_uni_in : std_logic_vector(6 DOWNTO 0) := "0000000";
+  signal count : integer := 0;
 begin
   process(clock)
   begin
     if(clock'event and clock = '1') then
-      if(count = 25000000) then
-        count := 0;
-        if(seg_uni_in = '0001001') then
-          if(seg_dec_in = '0000101') then
-            if(min_uni_in = '0001001') then
-              if(min_dec_in = '0000101') then
-                if(hora_uni_in = '0001001' or hora_uni_in = '0000011') then
-                  if(hora_dec_in = '0000010') then
-                    if(hora_dec_in = '0000010' and hora_uni_in = '0000011') then
-                      seg_uni_in := '0000000';
-                      seg_dec_in := '0000000';
-                      min_uni_in := '0000000';
-                      min_dec_in := '0000000';
-                      hora_uni_in := '0000000';
-                      hora_dec_in := '0000000';
+      if(count = 50000000) then
+        count <= 0;
+        if(seg_uni_in = "0001001") then
+          if(seg_dec_in = "0000101") then
+            if(min_uni_in = "0001001") then
+              if(min_dec_in = "0000101") then
+                if(hora_uni_in = "0001001" or hora_uni_in = "0000011") then
+                  if(hora_dec_in = "0000010") then
+                    if(hora_dec_in = "0000010" and hora_uni_in = "0000011") then
+                      seg_uni_in <= "0000000";
+                      seg_dec_in <= "0000000";
+                      min_uni_in <= "0000000";
+                      min_dec_in <= "0000000";
+                      hora_uni_in <= "0000000";
+                      hora_dec_in <= "0000000";
                     end if;
                   else
-                    seg_uni_in := '0000000';
-                    seg_dec_in := '0000000';
-                    min_uni_in := '0000000';
-                    min_dec_in := '0000000';
-                    hora_uni_in := '0000000';
-                    hora_dec_in := hora_dec_in + 1;
+                    seg_uni_in <= "0000000";
+                    seg_dec_in <= "0000000";
+                    min_uni_in <= "0000000";
+                    min_dec_in <= "0000000";
+                    hora_uni_in <= "0000000";
+                    hora_dec_in <= hora_dec_in + 1;
                   end if;
                 else
-                  seg_uni_in := '0000000';
-                  seg_dec_in := '0000000';
-                  min_uni_in := '0000000';
-                  min_dec_in := '0000000';
-                  hora_uni_in := hora_uni_in + 1;
+                  seg_uni_in <= "0000000";
+                  seg_dec_in <= "0000000";
+                  min_uni_in <= "0000000";
+                  min_dec_in <= "0000000";
+                  hora_uni_in <= hora_uni_in + 1;
                 end if;
               else
-                seg_uni_in := '0000000';
-                seg_dec_in := '0000000';
-                min_uni_in := '0000000';
-                min_dec_in := min_dec_in + 1;
+                seg_uni_in <= "0000000";
+                seg_dec_in <= "0000000";
+                min_uni_in <= "0000000";
+                min_dec_in <= min_dec_in + 1;
               end if;
             else
-              seg_uni_in := '0000000';
-              seg_dec_in := '0000000';
-              min_uni_in := min_uni_in + 1;
+              seg_uni_in <= "0000000";
+              seg_dec_in <= "0000000";
+              min_uni_in <= min_uni_in + 1;
             end if;
           else
-            seg_uni_in := '0000000';
-            seg_dec_in := seg_dec_in + 1;
+            seg_uni_in <= "0000000";
+            seg_dec_in <= seg_dec_in + 1;
           end if;
         else
-          seg_uni_in := seg_uni_in + 1;
+          seg_uni_in <= seg_uni_in + 1;
         end if;
       else
-        count := count + 1;
+        count <= count + 1;
       end if;
     end if;
   end process;
 
-	process(seg_uni, seg_uni, min_uni, min_dec, hora_uni, hora_dec)
+	process(seg_uni_in, seg_uni_in, min_uni_in, min_dec_in, hora_uni_in, hora_dec_in)
 	begin
 		IF (seg_uni_in = "0000") THEN
-			seg_uni <= "0111111";
+			seg_uni <= "1000000";
 		ELSIF (seg_uni_in = "0001") THEN
-			seg_uni <= "0000110";
+			seg_uni <= "1111001";
 		ELSIF (seg_uni_in = "0010") THEN
-			seg_uni <= "1011011";
+			seg_uni <= "0100100";
 		ELSIF (seg_uni_in = "0011") THEN
-			seg_uni <= "1001111";
+			seg_uni <= "0110000";
 		ELSIF (seg_uni_in = "0100") THEN
-			seg_uni <= "1100110";
+			seg_uni <= "0011001";
 		ELSIF (seg_uni_in = "0101") THEN
-			seg_uni <= "1101101";
+			seg_uni <= "0010010";
 		ELSIF (seg_uni_in = "0110") THEN
-			seg_uni <= "1111101";
+			seg_uni <= "0000010";
 		ELSIF (seg_uni_in = "0111") THEN
-			seg_uni <= "0000111";
+			seg_uni <= "1111000";
 		ELSIF (seg_uni_in = "1000") THEN
-			seg_uni <= "1111111";
+			seg_uni <= "0000000";
 		ELSIF (seg_uni_in = "1001") THEN
-			seg_uni <= "1101111";
+			seg_uni <= "0010000";
 		END IF;
 
 		IF (seg_dec_in = "0000") THEN
-			seg_dec <= "0111111";
+			seg_dec <= "1000000";
 		ELSIF (seg_dec_in = "0001") THEN
-			seg_dec <= "0000110";
+			seg_dec <= "1111001";
 		ELSIF (seg_dec_in = "0010") THEN
-			seg_dec <= "1011011";
+			seg_dec <= "0100100";
 		ELSIF (seg_dec_in = "0011") THEN
-			seg_dec <= "1001111";
+			seg_dec <= "0110000";
 		ELSIF (seg_dec_in = "0100") THEN
-			seg_dec <= "1100110";
+			seg_dec <= "0011001";
 		ELSIF (seg_dec_in = "0101") THEN
-			seg_dec <= "1101101";
+			seg_dec <= "0010010";
 		ELSIF (seg_dec_in = "0110") THEN
-			seg_dec <= "1111101";
+			seg_dec <= "0000010";
 		ELSIF (seg_dec_in = "0111") THEN
-			seg_dec <= "0000111";
+			seg_dec <= "1111000";
 		ELSIF (seg_dec_in = "1000") THEN
-			seg_dec <= "1111111";
+			seg_dec <= "0000000";
 		ELSIF (seg_dec_in = "1001") THEN
-			seg_dec <= "1101111";
+			seg_dec <= "0010000";
 		END IF;
 
 		IF (min_uni_in = "0000") THEN
-			min_uni <= "0111111";
-		ELSIF (seg_uni_in = "0001") THEN
-			min_uni <= "0000110";
+			min_uni <= "1000000";
+		ELSIF (min_uni_in = "0001") THEN
+			min_uni <= "1111001";
 		ELSIF (min_uni_in = "0010") THEN
-			min_uni <= "1011011";
+			min_uni <= "0100100";
 		ELSIF (min_uni_in = "0011") THEN
-			min_uni <= "1001111";
+			min_uni <= "0110000";
 		ELSIF (min_uni_in = "0100") THEN
-			min_uni <= "1100110";
+			min_uni <= "0011001";
 		ELSIF (min_uni_in = "0101") THEN
-			min_uni <= "1101101";
+			min_uni <= "0010010";
 		ELSIF (min_uni_in = "0110") THEN
-			min_uni <= "1111101";
+			min_uni <= "0000010";
 		ELSIF (min_uni_in = "0111") THEN
-			min_uni <= "0000111";
+			min_uni <= "1111000";
 		ELSIF (min_uni_in = "1000") THEN
-			min_uni <= "1111111";
+			min_uni <= "0000000";
 		ELSIF (min_uni_in = "1001") THEN
-			min_uni <= "1101111";
+			min_uni <= "0010000";
 		END IF;
 
 		IF (min_dec_in = "0000") THEN
-			min_dec <= "0111111";
+			min_dec <= "1000000";
 		ELSIF (min_dec_in = "0001") THEN
-			min_dec <= "0000110";
+			min_dec <= "1111001";
 		ELSIF (min_dec_in = "0010") THEN
-			min_dec <= "1011011";
+			min_dec <= "0100100";
 		ELSIF (min_dec_in = "0011") THEN
-			min_dec <= "1001111";
+			min_dec <= "0110000";
 		ELSIF (min_dec_in = "0100") THEN
-			min_dec <= "1100110";
+			min_dec <= "0011001";
 		ELSIF (min_dec_in = "0101") THEN
-			min_dec <= "1101101";
+			min_dec <= "0010010";
 		ELSIF (min_dec_in = "0110") THEN
-			min_dec <= "1111101";
+			min_dec <= "0000010";
 		ELSIF (min_dec_in = "0111") THEN
-			min_dec <= "0000111";
+			min_dec <= "1111000";
 		ELSIF (min_dec_in = "1000") THEN
-			min_dec <= "1111111";
+			min_dec <= "0000000";
 		ELSIF (min_dec_in = "1001") THEN
-			min_dec <= "1101111";
+			min_dec <= "0010000";
 		END IF;
 
 		IF (hora_uni_in = "0000") THEN
-			hora_uni <= "0111111";
+			hora_uni <= "1000000";
 		ELSIF (hora_uni_in = "0001") THEN
-			hora_uni <= "0000110";
+			hora_uni <= "1111001";
 		ELSIF (hora_uni_in = "0010") THEN
-			hora_uni <= "1011011";
+			hora_uni <= "0100100";
 		ELSIF (hora_uni_in = "0011") THEN
-			hora_uni <= "1001111";
+			hora_uni <= "0110000";
 		ELSIF (hora_uni_in = "0100") THEN
-			hora_uni <= "1100110";
+			hora_uni <= "0011001";
 		ELSIF (hora_uni_in = "0101") THEN
-			hora_uni <= "1101101";
+			hora_uni <= "0010010";
 		ELSIF (hora_uni_in = "0110") THEN
-			hora_uni <= "1111101";
+			hora_uni <= "0000010";
 		ELSIF (hora_uni_in = "0111") THEN
-			hora_uni <= "0000111";
+			hora_uni <= "1111000";
 		ELSIF (hora_uni_in = "1000") THEN
-			hora_uni <= "1111111";
+			hora_uni <= "0000000";
 		ELSIF (hora_uni_in = "1001") THEN
-			hora_uni <= "1101111";
+			hora_uni <= "0010000";
 		END IF;
 
 		IF (hora_dec_in = "0000") THEN
-			hora_dec <= "0111111";
+			hora_dec <= "1000000";
 		ELSIF (hora_dec_in = "0001") THEN
-			hora_dec <= "0000110";
+			hora_dec <= "1111001";
 		ELSIF (hora_dec_in = "0010") THEN
-			hora_dec <= "1011011";
+			hora_dec <= "0100100";
 		ELSIF (hora_dec_in = "0011") THEN
-			hora_dec <= "1001111";
+			hora_dec <= "0110000";
 		ELSIF (hora_dec_in = "0100") THEN
-			hora_dec <= "1100110";
+			hora_dec <= "0011001";
 		ELSIF (hora_dec_in = "0101") THEN
-			hora_dec <= "1101101";
+			hora_dec <= "0010010";
 		ELSIF (hora_dec_in = "0110") THEN
-			hora_dec <= "1111101";
+			hora_dec <= "0000010";
 		ELSIF (hora_dec_in = "0111") THEN
-			hora_dec <= "0000111";
+			hora_dec <= "1111000";
 		ELSIF (hora_dec_in = "1000") THEN
-			hora_dec <= "1111111";
+			hora_dec <= "0000000";
 		ELSIF (hora_dec_in = "1001") THEN
-			hora_dec <= "1101111";
+			hora_dec <= "0010000";
 		END IF;
-		
+
 	end process;
 end Projeto_relogio;
