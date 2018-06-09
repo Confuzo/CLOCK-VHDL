@@ -26,69 +26,35 @@ Architecture Projeto_relogio of Projeto_relogio is
   signal min_uni_in : std_logic_vector(6 DOWNTO 0) := "0000000";
   signal seg_dec_in : std_logic_vector(6 DOWNTO 0) := "0000000";
   signal seg_uni_in : std_logic_vector(6 DOWNTO 0) := "0000000";
+  signal aux : std_logic_vector(6 DOWNTO 0);
   signal count : integer := 0;
+	signal c_mode : integer := 0;
+	signal c_config : integer := 0;
 begin
-  process(clock)
+  process( mode, config)
   begin
-    if(clock'event and clock = '1') then
-      if(count = 50000000) then
-        count <= 0;
-        if(seg_uni_in = "0001001") then
-          if(seg_dec_in = "0000101") then
-            if(min_uni_in = "0001001") then
-              if(min_dec_in = "0000101") then
-                if(hora_uni_in = "0001001" or hora_uni_in = "0000011") then
-                  if(hora_dec_in = "0000010") then
-                    if(hora_dec_in = "0000010" and hora_uni_in = "0000011") then
-                      seg_uni_in <= "0000000";
-                      seg_dec_in <= "0000000";
-                      min_uni_in <= "0000000";
-                      min_dec_in <= "0000000";
-                      hora_uni_in <= "0000000";
-                      hora_dec_in <= "0000000";
-                    end if;
-                  else
-                    seg_uni_in <= "0000000";
-                    seg_dec_in <= "0000000";
-                    min_uni_in <= "0000000";
-                    min_dec_in <= "0000000";
-                    hora_uni_in <= "0000000";
-                    hora_dec_in <= hora_dec_in + 1;
-                  end if;
-                else
-                  seg_uni_in <= "0000000";
-                  seg_dec_in <= "0000000";
-                  min_uni_in <= "0000000";
-                  min_dec_in <= "0000000";
-                  hora_uni_in <= hora_uni_in + 1;
-                end if;
-              else
-                seg_uni_in <= "0000000";
-                seg_dec_in <= "0000000";
-                min_uni_in <= "0000000";
-                min_dec_in <= min_dec_in + 1;
-              end if;
-            else
-              seg_uni_in <= "0000000";
-              seg_dec_in <= "0000000";
-              min_uni_in <= min_uni_in + 1;
-            end if;
-          else
-            seg_uni_in <= "0000000";
-            seg_dec_in <= seg_dec_in + 1;
-          end if;
-        else
-          seg_uni_in <= seg_uni_in + 1;
-        end if;
-      else
-        count <= count + 1;
-      end if;
-    end if;
+		if(mode'event and mode = '0') then
+			if(c_mode = 2) then
+				c_mode <= 0;
+			else
+				c_mode <= c_mode + 1;
+			end if;
+		end if;
+
+		if(config'event and config = '1') then
+			if(c_config = 3) then
+				c_config <= 0;
+			else
+				c_config <= c_config +1;
+			end if;
+		end if;
   end process;
 
-	process(seg_uni_in, seg_uni_in, min_uni_in, min_dec_in, hora_uni_in, hora_dec_in)
+	process(seg_uni_in, seg_uni_in, min_uni_in, min_dec_in, hora_uni_in, hora_dec_in, c_mode)
 	begin
-		IF (seg_uni_in = "0000") THEN
+		case c_mode is
+			when 0 =>
+				IF (seg_uni_in = "0000") THEN
 			seg_uni <= "1000000";
 		ELSIF (seg_uni_in = "0001") THEN
 			seg_uni <= "1111001";
@@ -220,5 +186,81 @@ begin
 			hora_dec <= "0010000";
 		END IF;
 
+			when 1 =>
+			when 2 =>
+			when others =>
+		end case;
+	end process;
+	
+	process(clock, str_sto)
+	begin
+	case c_config is
+	when 0 =>
+			if(clock'event and clock = '1') then
+	      if(count = 50000000) then
+	        count <= 0;
+	        if(seg_uni_in = "0001001") then
+	          if(seg_dec_in = "0000101") then
+	            if(min_uni_in = "0001001") then
+	              if(min_dec_in = "0000101") then
+	                if(hora_uni_in = "0001001" or hora_uni_in = "0000011") then
+	                  if(hora_dec_in = "0000010") then
+	                    if(hora_dec_in = "0000010" and hora_uni_in = "0000011") then
+	                      seg_uni_in <= "0000000";
+	                      seg_dec_in <= "0000000";
+	                      min_uni_in <= "0000000";
+	                      min_dec_in <= "0000000";
+	                      hora_uni_in <= "0000000";
+	                      hora_dec_in <= "0000000";
+	                    end if;
+	                  else
+	                    seg_uni_in <= "0000000";
+	                    seg_dec_in <= "0000000";
+	                    min_uni_in <= "0000000";
+	                    min_dec_in <= "0000000";
+	                    hora_uni_in <= "0000000";
+	                    hora_dec_in <= hora_dec_in + 1;
+	                  end if;
+	                else
+	                  seg_uni_in <= "0000000";
+	                  seg_dec_in <= "0000000";
+	                  min_uni_in <= "0000000";
+	                  min_dec_in <= "0000000";
+	                  hora_uni_in <= hora_uni_in + 1;
+	                end if;
+	              else
+	                seg_uni_in <= "0000000";
+	                seg_dec_in <= "0000000";
+	                min_uni_in <= "0000000";
+	                min_dec_in <= min_dec_in + 1;
+	              end if;
+	            else
+	              seg_uni_in <= "0000000";
+	              seg_dec_in <= "0000000";
+	              min_uni_in <= min_uni_in + 1;
+	            end if;
+	          else
+	            seg_uni_in <= "0000000";
+	            seg_dec_in <= seg_dec_in + 1;
+	          end if;
+	        else
+	          seg_uni_in <= seg_uni_in + 1;
+	        end if;
+	      else
+	        count <= count + 1;
+	      end if;
+	    end if;
+		 
+	when 1 =>
+		if(str_sto'event and str_sto='1') then
+		--	if(clock'event and clock = '1') then
+			if(seg_uni_in = "0001001") then
+				aux <= seg_uni_in + 1;
+			end if;
+		end if;
+	when 2 => 
+	when 3 =>
+	when others =>
+	end case;
 	end process;
 end Projeto_relogio;
