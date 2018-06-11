@@ -20,8 +20,9 @@ signal min_dec_A : std_logic_vector(6 DOWNTO 0);
 signal min_uni_A : std_logic_vector(6 DOWNTO 0);
 signal count : integer := 0;
 signal count_2 : integer := 0;
+signal led_alarme_A : std_logic;
 begin
-	process(config)
+	process(set)
 	begin
 		if (config = '1') then
 			if(str_sto = '0') then
@@ -31,7 +32,7 @@ begin
 				elsif(hora_dec_A = "0000010" and hora_uni_A = "0000011") then
 					hora_dec_A <= "0000000";
 					hora_uni_A <= "0000000";
-				else 
+				else
 					hora_uni_A <= hora_uni_A + 1;
 				end if;
 			end if;
@@ -43,23 +44,25 @@ begin
 					elsif(min_dec_A = "0000101" and min_uni_A = "0001001") then
 						min_dec_A <= "0000000";
 						min_uni_A <= "0000000";
-					else 
+					else
 						min_uni_A <= min_uni_A + 1;
 					end if;
 				end if;
 		end if;
 	end if;
-	end process;
-	
+
 	if(min_uni = min_uni_A) then
 		if(min_dec = min_dec_A) then
 			if(hora_uni = hora_uni_A) then
 				if(hora_dec = hora_dec_A) then
-					led_alarme <= '1';
+					led_alarme_A <= '1';
 				end if;
 			end if;
 		end if;
-		else 
-			led_alarme <= '0';
 	end if;
+
+	end process;
+
+led_alarme <= led_alarme_A;
+
 end Alarme;
